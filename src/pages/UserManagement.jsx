@@ -1,208 +1,102 @@
 import React, { useState } from 'react';
-import { Bell, User, Phone, MapPin, Edit, PlusCircle, Save, X } from 'lucide-react';
+import { Search, Filter, MoreVertical, UserCheck, UserX, Key, Edit, Plus } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const initialUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    branch: "Downtown Branch",
-    dueDate: "2024-09-15",
-    status: "active"
-  },
-  {
-    id: 2,
-    name: "Sarah Smith",
-    branch: "Uptown Branch", 
-    dueDate: "2024-02-01",
-    status: "expired"
-  }
+  { id: 1, name: "John Doe", email: "john@example.com", status: "active", subscription: "premium" },
+  { id: 2, name: "Jane Smith", email: "jane@example.com", status: "inactive", subscription: "basic" }
 ];
 
-const UserManagement = () => {
+export default function UserManagement() {
   const [users, setUsers] = useState(initialUsers);
-  const [editingUser, setEditingUser] = useState(null);
-  const [newOutlet, setNewOutlet] = useState({
-    name: '',
-    branch: '',
-    dueDate: ''
-  });
-  const [showAddOutletModal, setShowAddOutletModal] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newUser, setNewUser] = useState({ name: '', email: '', status: 'active', subscription: 'basic' });
 
-  const calculateValidity = (dueDate) => {
-    return Math.ceil((new Date(dueDate) - new Date()) / (1000 * 60 * 60 * 24));
-  };
-
-  const handleEditUser = (user) => {
-    setEditingUser({...user});
-  };
-
-  const saveUserEdit = () => {
-    setUsers(users.map(u => 
-      u.id === editingUser.id ? editingUser : u
-    ));
-    setEditingUser(null);
-  };
-
-  const handleAddOutlet = () => {
-    const newUser = {
-      id: users.length + 1,
-      ...newOutlet,
-      status: calculateValidity(newOutlet.dueDate) > 0 ? 'active' : 'expired'
-    };
-    
-    setUsers([...users, newUser]);
-    setShowAddOutletModal(false);
-    setNewOutlet({ name: '', branch: '', dueDate: '' });
+  const handleAddUser = () => {
+    setUsers([...users, { ...newUser, id: users.length + 1 }]);
+    setIsDialogOpen(false);
+    setNewUser({ name: '', email: '', status: 'active', subscription: 'basic' });
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 p-6 font-sans">
-      {/* Header Section */}
-      <header className="flex justify-between items-center mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
-        <div className="flex items-center space-x-4">
-          <User className="text-[#00C8C8]" size={40} />
-          <div>
-            <h1 className="text-2xl font-bold">Admin Panel</h1>
+    <div className="p-4 space-y-4">
+      <Card>
+        <CardHeader className="flex justify-between items-center">
+          <CardTitle className="text-xl">User Management</CardTitle>
+          <Button onClick={() => setIsDialogOpen(true)} className="flex items-center gap-2">
+            <Plus size={18} /> Add User
+          </Button>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex gap-4 mb-4">
+            <Input placeholder="Search users..." className="max-w-sm" />
+            <Button variant="outline" className="flex items-center gap-2">
+              <Filter size={16} /> Filter
+            </Button>
           </div>
-        </div>
-        <Bell className="text-[#00C8C8]" size={24} />
-      </header>
 
-      {/* User List Section */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map(user => {
-          const validity = calculateValidity(user.dueDate);
-          const isActive = validity > 0;
+          <table className="w-full border rounded-md">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-2 text-left">Name</th>
+                <th className="p-2 text-left">Email</th>
+                <th className="p-2 text-left">Status</th>
+                <th className="p-2 text-left">Subscription</th>
+                <th className="p-2 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(user => (
+                <tr key={user.id} className="border-t">
+                  <td className="p-2">{user.name}</td>
+                  <td className="p-2">{user.email}</td>
+                  <td className="p-2 capitalize">{user.status}</td>
+                  <td className="p-2 capitalize">{user.subscription}</td>
+                  <td className="p-2 text-center space-x-2">
+                    <Button variant="ghost" size="icon">
+                      <Edit size={16} />
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                      {user.status === 'active' ? <UserX size={16} /> : <UserCheck size={16} />}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
 
-          if (editingUser && editingUser.id === user.id) {
-            return (
-              <div key={user.id} className="bg-gray-100 rounded-lg p-6 shadow-lg">
-                <input 
-                  value={editingUser.name}
-                  onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
-                  className="w-full mb-2 p-2 border rounded"
-                  placeholder="Name"
-                />
-                <input 
-                  value={editingUser.branch}
-                  onChange={(e) => setEditingUser({...editingUser, branch: e.target.value})}
-                  className="w-full mb-2 p-2 border rounded"
-                  placeholder="Branch"
-                />
-                <input 
-                  type="date"
-                  value={editingUser.dueDate}
-                  onChange={(e) => setEditingUser({...editingUser, dueDate: e.target.value})}
-                  className="w-full mb-2 p-2 border rounded"
-                />
-                <div className="flex justify-between mt-4">
-                  <button 
-                    onClick={saveUserEdit}
-                    className="bg-[#00C8C8] text-white px-4 py-2 rounded flex items-center"
-                  >
-                    <Save size={18} className="mr-2" /> Save
-                  </button>
-                  <button 
-                    onClick={() => setEditingUser(null)}
-                    className="bg-red-500 text-white px-4 py-2 rounded flex items-center"
-                  >
-                    <X size={18} className="mr-2" /> Cancel
-                  </button>
-                </div>
-              </div>
-            );
-          }
+      {/* Add User Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+          </DialogHeader>
 
-          return (
-            <div 
-              key={user.id} 
-              className="bg-gray-100 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative"
-            >
-              <div 
-                className={`absolute top-4 right-4 w-3 h-3 rounded-full ${
-                  isActive ? 'bg-green-500' : 'bg-red-500'
-                }`}
-              />
-
-              <h2 className="text-xl font-bold mb-2">{user.name}</h2>
-              <div className="text-gray-600 space-y-1">
-                <p>Branch: {user.branch}</p>
-                <p>
-                  Due Date: 
-                  <span 
-                    className={`ml-2 ${
-                      isActive ? 'text-green-600' : 'text-red-600'
-                    }`}
-                  >
-                    {Math.abs(validity)} days {isActive ? 'remaining' : 'expired'}
-                  </span>
-                </p>
-              </div>
-
-              <button 
-                onClick={() => handleEditUser(user)}
-                className="absolute bottom-4 right-4 text-[#00C8C8] hover:opacity-80"
-              >
-                <Edit size={24} />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Add Outlet Button */}
-      <div className="fixed bottom-6 right-6">
-        <button 
-          onClick={() => setShowAddOutletModal(true)}
-          className="bg-[#00C8C8] text-white px-6 py-3 rounded-full shadow-lg hover:opacity-90 transition-colors flex items-center space-x-2"
-        >
-          <PlusCircle size={24} />
-          <span>Add Outlet</span>
-        </button>
-      </div>
-
-      {/* Add Outlet Modal */}
-      {showAddOutletModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Add New Outlet</h2>
-            <input 
-              value={newOutlet.name}
-              onChange={(e) => setNewOutlet({...newOutlet, name: e.target.value})}
-              className="w-full mb-2 p-2 border rounded"
-              placeholder="Name"
+          <div className="space-y-2">
+            <Input
+              placeholder="Full Name"
+              value={newUser.name}
+              onChange={e => setNewUser({ ...newUser, name: e.target.value })}
             />
-            <input 
-              value={newOutlet.branch}
-              onChange={(e) => setNewOutlet({...newOutlet, branch: e.target.value})}
-              className="w-full mb-2 p-2 border rounded"
-              placeholder="Branch"
+            <Input
+              placeholder="Email"
+              value={newUser.email}
+              onChange={e => setNewUser({ ...newUser, email: e.target.value })}
             />
-            <input 
-              type="date"
-              value={newOutlet.dueDate}
-              onChange={(e) => setNewOutlet({...newOutlet, dueDate: e.target.value})}
-              className="w-full mb-2 p-2 border rounded"
-            />
-            <div className="flex justify-between mt-4">
-              <button 
-                onClick={handleAddOutlet}
-                className="bg-[#00C8C8] text-white px-4 py-2 rounded"
-              >
-                Add Outlet
-              </button>
-              <button 
-                onClick={() => setShowAddOutletModal(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleAddUser}>Add User</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
-
-export default UserManagement;
+}

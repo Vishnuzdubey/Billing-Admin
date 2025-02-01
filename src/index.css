@@ -6,6 +6,10 @@
   body {
     @apply text-gray-900 bg-gray-50;
   }
+  :root {
+
+    --radius: 0.5rem
+  }
 }
 
 @layer components {

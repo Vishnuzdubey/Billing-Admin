@@ -1,178 +1,138 @@
-import React, { useState } from 'react';
-import { 
-  DollarSign, 
-  Users, 
-  CreditCard, 
-  TrendingUp, 
-  TrendingDown, 
-  CheckCircle, 
-  AlertCircle 
-} from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts';
-
-// Sample Dashboard Data
-const dashboardData = {
-  totalRevenue: 127850,
-  totalUsers: 1245,
-  activeSubscriptions: 987,
-  monthlyGrowth: 12.5,
-  revenueData: [
-    { name: 'Jan', revenue: 45000 },
-    { name: 'Feb', revenue: 52000 },
-    { name: 'Mar', revenue: 62000 },
-    { name: 'Apr', revenue: 58000 },
-    { name: 'May', revenue: 71000 },
-  ],
-  recentTransactions: [
-    { 
-      id: 1, 
-      name: "John Doe", 
-      amount: 499, 
-      status: "Completed", 
-      date: "2024-01-15" 
-    },
-    { 
-      id: 2, 
-      name: "Sarah Smith", 
-      amount: 299, 
-      status: "Pending", 
-      date: "2024-01-20" 
-    }
-  ]
-};
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Users, CreditCard, Building2, AlertCircle } from 'lucide-react';
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  // Sample data - in production, this would come from your API
+  const revenueData = [
+    { month: 'Jan', revenue: 45000, users: 156 },
+    { month: 'Feb', revenue: 52000, users: 178 },
+    { month: 'Mar', revenue: 49000, users: 201 },
+    { month: 'Apr', revenue: 58000, users: 223 },
+    { month: 'May', revenue: 63000, users: 245 },
+    { month: 'Jun', revenue: 72000, users: 278 },
+  ];
+
+  const stats = {
+    totalRevenue: 339000,
+    activeUsers: 278,
+    pendingInvoices: 23,
+    activeStores: 142
+  };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 p-6 font-sans">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <header className="flex justify-between items-center mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-[#00C8C8]">Dashboard</h1>
-        <div className="flex space-x-4">
-          <button 
-            onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 rounded ${
-              activeTab === 'overview' 
-                ? 'bg-[#00C8C8] text-white' 
-                : 'text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            Overview
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <div className="space-x-4">
+          <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Create Invoice
           </button>
-          <button 
-            onClick={() => setActiveTab('transactions')}
-            className={`px-4 py-2 rounded ${
-              activeTab === 'transactions' 
-                ? 'bg-[#00C8C8] text-white' 
-                : 'text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            Transactions
+          <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Add User
           </button>
         </div>
-      </header>
+      </div>
 
-      {activeTab === 'overview' && (
-        <div className="grid md:grid-cols-4 gap-6">
-          {/* Key Metrics Cards */}
-          <div className="bg-gray-100 rounded-lg p-6 flex items-center">
-            <DollarSign className="text-[#00C8C8] mr-4" size={40} />
-            <div>
-              <h3 className="text-gray-500">Total Revenue</h3>
-              <p className="text-2xl font-bold">${dashboardData.totalRevenue.toLocaleString()}</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">+12% from last month</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.activeUsers}</div>
+            <p className="text-xs text-muted-foreground">+15 since last week</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Invoices</CardTitle>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pendingInvoices}</div>
+            <p className="text-xs text-muted-foreground">5 require attention</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Stores</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.activeStores}</div>
+            <p className="text-xs text-muted-foreground">+3 this month</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue Over Time</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#2563eb" 
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="bg-gray-100 rounded-lg p-6 flex items-center">
-            <Users className="text-[#00C8C8] mr-4" size={40} />
-            <div>
-              <h3 className="text-gray-500">Total Users</h3>
-              <p className="text-2xl font-bold">{dashboardData.totalUsers}</p>
+        <Card>
+          <CardHeader>
+            <CardTitle>User Growth</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="users" 
+                    stroke="#16a34a" 
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-          </div>
-
-          <div className="bg-gray-100 rounded-lg p-6 flex items-center">
-            <CreditCard className="text-[#00C8C8] mr-4" size={40} />
-            <div>
-              <h3 className="text-gray-500">Active Subscriptions</h3>
-              <p className="text-2xl font-bold">{dashboardData.activeSubscriptions}</p>
-            </div>
-          </div>
-
-          <div className="bg-gray-100 rounded-lg p-6 flex items-center">
-            <TrendingUp className="text-green-500 mr-4" size={40} />
-            <div>
-              <h3 className="text-gray-500">Monthly Growth</h3>
-              <p className="text-2xl font-bold text-green-500">
-                {dashboardData.monthlyGrowth}%
-              </p>
-            </div>
-          </div>
-
-          {/* Revenue Chart */}
-          <div className="col-span-full bg-gray-100 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Monthly Revenue</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={dashboardData.revenueData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#00C8C8" 
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'transactions' && (
-        <div className="bg-gray-100 rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-4">Recent Transactions</h2>
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="p-3 text-left">Transaction ID</th>
-                <th className="p-3 text-left">Name</th>
-                <th className="p-3 text-left">Amount</th>
-                <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dashboardData.recentTransactions.map(transaction => (
-                <tr key={transaction.id} className="border-b">
-                  <td className="p-3">{transaction.id}</td>
-                  <td className="p-3">{transaction.name}</td>
-                  <td className="p-3">${transaction.amount}</td>
-                  <td className="p-3">{transaction.date}</td>
-                  <td className="p-3">
-                    <span className={`
-                      px-2 py-1 rounded-full text-sm
-                      ${transaction.status === 'Completed' 
-                        ? 'bg-green-100 text-green-700' 
-                        : 'bg-yellow-100 text-yellow-700'}
-                    `}>
-                      {transaction.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
