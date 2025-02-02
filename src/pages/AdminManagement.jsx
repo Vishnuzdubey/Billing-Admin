@@ -58,7 +58,7 @@ const initialAuditLogs = [
 
 const ROLES = {
   super_admin: {
-    label: "Super Admin",
+    label: "Admin",
     color: "bg-purple-100 text-purple-800"
   },
   admin: {
@@ -66,7 +66,7 @@ const ROLES = {
     color: "bg-blue-100 text-blue-800"
   },
   moderator: {
-    label: "Moderator",
+    label: "Admin",
     color: "bg-green-100 text-green-800"
   }
 };
