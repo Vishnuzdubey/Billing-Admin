@@ -1,5 +1,8 @@
 import React from 'react';
 import { Bell, Mail, Search, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+  const navigate = useNavigate();
 
 const Header = () => {
   return (
@@ -31,6 +34,17 @@ const Header = () => {
             </div>
             <button className="w-8 h-8 rounded-full bg-[#DD2B2B] flex items-center justify-center">
               <User className="w-5 h-5 text-white" />
+            </button>
+            <button
+              className="p-4 bg-[#DD2B2B] flex items-center justify-center"
+              onClick={async () => {
+              localStorage.removeItem('admin');
+              localStorage.removeItem('subadmin');
+              navigate('/login');
+              console.log('Logged out');
+              }}
+            >
+              Logout
             </button>
           </div>
         </div>
